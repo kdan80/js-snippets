@@ -1,8 +1,11 @@
-const debounce = (fn: Function, timeout = 300) => {
-    let ticker: ReturnType<typeof setTimeout>;
-    return function (this: unknown, ...args: unknown[]) {
+type Ticker = ReturnType<typeof setTimeout>
+type Callback = (...args: Parameters<typeof Function>) => void
+type Debounce<T extends Function> = (callback: T, timeout?: number) => () => void
+
+export const debounce: Debounce<Callback> = (callback, timeout = 300) => {
+    let ticker: Ticker
+    return function <U>(this: U, ...args: Parameters<typeof callback>) {
       clearTimeout(ticker);
-      ticker = setTimeout(() => fn.apply(this, args), timeout);
+      ticker = setTimeout(() => callback.apply(this, args), timeout);
     }
 }
-  
